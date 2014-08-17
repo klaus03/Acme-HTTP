@@ -1,0 +1,80 @@
+Acme-HTTP Version 0.01
+
+Acme::HTTP - High-level access to Net::HTTP and Net::HTTPS
+
+SYNOPSIS
+
+  use Acme::HTTP;
+
+  # you can use http:
+  my $url = "http://perldoc.perl.org/perlfaq5.html";
+
+  # ...or, alternatively, use https:
+  #  $url = "https://metacpan.org/pod/Data::Dumper";
+
+  my $s = Acme::HTTP->new($url) || die $@;
+
+  if ($Acme::HTTP::Code eq '404') {
+      die "Page '$url' not found";
+  }
+  elsif ($Acme::HTTP::Code ne '200') {
+      die "Page '$url' - Error $Acme::HTTP::Code, ".
+        "Msg '$Acme::HTTP::Message'";
+  }
+
+  print "Orig url   = ", $url, "\n";
+  print "Real url   = ", $Acme::HTTP::Real_Url, "\n";
+  print "Iterations = ", $Acme::HTTP::Iter, "\n";
+  print "Length     = ", $Acme::HTTP::Response{'Content-Length'} // 0, "\n";
+  print "\n";
+
+  while (1) {
+      my $n = $s->read_entity_body(my $buf, 4096);
+      die "read failed: $!" unless defined $n;
+      last unless $n;
+
+      print $buf;
+  }
+
+INSTALLATION
+
+    To install this module, run the following commands:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+SUPPORT AND DOCUMENTATION
+
+    After installing, you can find documentation for this module with the
+    perldoc command.
+
+    perldoc Acme::HTTP
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Acme-HTTP
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/Acme-HTTP
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/Acme-HTTP
+
+    Search CPAN
+        http://search.cpan.org/dist/Acme-HTTP/
+
+
+AUTHOR
+
+    Klaus Eichner <klaus03@gmail.com>
+
+COPYRIGHT AND LICENSE
+
+    Copyright (C) 2014 by Klaus Eichner
+
+    All rights reserved. This program is free software; you can redistribute
+    it and/or modify it under the terms of the artistic license 2.0,
+    see http://www.opensource.org/licenses/artistic-license-2.0.php

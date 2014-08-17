@@ -1,0 +1,24 @@
+---
+abstract: 'High-level access to Net::HTTP and Net::HTTPS'
+author:
+  - 'Klaus Eichner <klaus03@gmail.com>'
+build_requires: {}
+configure_requires:
+  Module::Build: '0'
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4205, CPAN::Meta::Converter version 2.141170'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: Acme-HTTP
+provides:
+  Acme::HTTP:
+    file: lib/Acme/HTTP.pm
+    version: '0.01'
+requires:
+  Net::HTTP: '0'
+  Net::HTTPS: '0'
+resources:
+  license: http://dev.perl.org/licenses/
+version: '0.01'
