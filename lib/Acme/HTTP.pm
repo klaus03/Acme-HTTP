@@ -7,7 +7,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT    = qw();
 our @EXPORT_OK = qw();
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 
 use Net::HTTP;
 use Net::HTTPS;
@@ -117,12 +117,18 @@ The following variables are available read-only after new():
 =over
 
 =item $Acme::HTTP::Code
+
 =item $Acme::HTTP::Message
+
 =item %Acme::HTTP::Response
-=item %Acme::HTTP::Real_Url
-=item %Acme::HTTP::Iter
+
+=item $Acme::HTTP::Real_Url
+
+=item $Acme::HTTP::Iter
 
 =back
+
+=head2 List of values
 
 In case of a successful read, the variables $Acme::HTTP::Code and
 $Acme::HTTP::Message are usually set as follows:
