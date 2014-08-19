@@ -6,7 +6,12 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Acme::HTTP',
     VERSION_FROM      => 'lib/Acme/HTTP.pm', # finds $VERSION
-    PREREQ_PM         => { 'Net::HTTP' => 0, 'Net::HTTPS' => 0 }, # e.g., Module::Name => 1.1
+    PREREQ_PM         => {
+      'Net::HTTP'       => 0,
+      'Net::HTTPS'      => 0,
+      'IO::Socket::SSL' => 0,
+      'Net::SSL'        => 0,
+    }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Acme/HTTP.pm', # retrieve abstract from module
        AUTHOR         => 'Klaus Eichner <klaus03@gmail.com>') : ()),

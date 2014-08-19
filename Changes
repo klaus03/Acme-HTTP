@@ -5,3 +5,8 @@ Revision history for Perl module Acme::HTTP
 
 0.02 2014-08-18
  - Fix some minor problems in the documentation.
+
+0.03 2014-08-19
+ - Add two more dependencies
+   IO::Socket::SSL
+   Net::SSL

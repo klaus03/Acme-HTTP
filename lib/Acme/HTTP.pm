@@ -7,7 +7,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT    = qw();
 our @EXPORT_OK = qw();
-our $VERSION   = '0.02';
+our $VERSION   = '0.03';
 
 use Net::HTTP;
 use Net::HTTPS;
