@@ -10,3 +10,6 @@ Revision history for Perl module Acme::HTTP
  - Add two more dependencies
    IO::Socket::SSL
    Net::SSL
+
+0.04 2014-08-20
+ - Allow for flexible Max Iterations

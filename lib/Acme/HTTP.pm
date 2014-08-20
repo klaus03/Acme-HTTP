@@ -7,10 +7,12 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT    = qw();
 our @EXPORT_OK = qw();
-our $VERSION   = '0.03';
+our $VERSION   = '0.04';
 
 use Net::HTTP;
 use Net::HTTPS;
+
+our $MaxIt = 3;
 
 sub new {
     my $self = shift;
@@ -26,8 +28,8 @@ sub new {
 
     while (defined $url) {
         $Iter++;
-        if ($Iter > 3) {
-            $@ = 'Acme::HTTP - Runaway iterations';
+        if ($Iter > $MaxIt) {
+            $@ = 'Acme::HTTP - Runaway iterations ('.$MaxIt.')';
             return;
         }
 
