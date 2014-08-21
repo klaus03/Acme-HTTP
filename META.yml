@@ -15,12 +15,12 @@ name: Acme-HTTP
 provides:
   Acme::HTTP:
     file: lib/Acme/HTTP.pm
-    version: '0.04'
+    version: '0.05'
 requires:
   IO::Socket::SSL: '0'
-  Net::HTTP: '0'
-  Net::HTTPS: '0'
+  Net::HTTP::NB: '0'
+  Net::HTTPS::NB: '0'
   Net::SSL: '0'
 resources:
   license: http://dev.perl.org/licenses/
-version: '0.04'
+version: '0.05'

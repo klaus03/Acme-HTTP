@@ -7,12 +7,16 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT    = qw();
 our @EXPORT_OK = qw();
-our $VERSION   = '0.04';
+our $VERSION   = '0.05';
 
-use Net::HTTP;
-use Net::HTTPS;
+use Net::HTTP::NB;
+use Net::HTTPS::NB;
 
-our $MaxIt = 3;
+our $MaxIt;
+$MaxIt = 3 unless defined $MaxIt;
+
+our $TimeOut;
+$TimeOut = 10 unless defined $TimeOut;
 
 sub new {
     my $self = shift;
@@ -44,8 +48,8 @@ sub new {
           };
 
         my $net_http =
-          $type eq 'http'  ? 'Net::HTTP'  :
-          $type eq 'https' ? 'Net::HTTPS' :
+          $type eq 'http'  ? 'Net::HTTP::NB'  :
+          $type eq 'https' ? 'Net::HTTPS::NB' :
           do { 
             $@ = 'Acme::HTTP - Can\'t identify type';
             return;
@@ -57,7 +61,20 @@ sub new {
         };
 
         $hdl->write_request(GET => $get, 'User-Agent' => 'Mozilla/5.0');
-        ($Code, $Message, %Response) = $hdl->read_response_headers;
+
+        use IO::Select;
+        my $sel = IO::Select->new($hdl);
+ 
+        READ_HEADER: {
+            unless ($sel->can_read($TimeOut)) {
+                $@ = 'Acme::HTTP - Header timeout('.$TimeOut.')';
+                return;
+            }
+
+            ($Code, $Message, %Response) = $hdl->read_response_headers;
+
+            redo READ_HEADER unless $Code;
+        }
 
         $url = $Response{'Location'};
     }
@@ -88,7 +105,10 @@ Acme::HTTP - High-level access to Net::HTTP and Net::HTTPS
     # ...or, alternatively, use https:
     #  $url = "https://metacpan.org/pod/Data::Dumper";
 
-    my $s = Acme::HTTP->new($url) || die $@;
+    $Acme::HTTP::MaxIt   =  3; # Number of redirections
+    $Acme::HTTP::TimeOut = 10; # TimeOut in seconds
+
+    my $obj = Acme::HTTP->new($url) || die $@;
 
     if ($Acme::HTTP::Code eq '404') {
         die "Page '$url' not found";
@@ -104,8 +124,14 @@ Acme::HTTP - High-level access to Net::HTTP and Net::HTTPS
     print "Length     = ", $Acme::HTTP::Response{'Content-Length'} // 0, "\n";
     print "\n";
 
+    use IO::Select;
+    my $sel = IO::Select->new($obj);
+
     while (1) {
-        my $n = $s->read_entity_body(my $buf, 4096);
+        # we allow 15 seconds before timeout
+        die "Body timeout" unless $sel->can_read(15);
+
+        my $n = $obj->read_entity_body(my $buf, 4096);
         die "read failed: $!" unless defined $n;
         last unless $n;
 

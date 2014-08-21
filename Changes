@@ -13,3 +13,7 @@ Revision history for Perl module Acme::HTTP
 
 0.04 2014-08-20
  - Allow for flexible Max Iterations
+
+0.05 2014-08-21
+ - Replace Net::HTTP  by Net::HTTP::NB
+   Replace Net::HTTPS by Net::HTTPS::NB

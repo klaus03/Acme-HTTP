@@ -9,8 +9,8 @@ Module::Build->new(
   license            => 'perl',
   configure_requires => { 'Module::Build' => 0 },
   requires           => {
-    'Net::HTTP'       => 0,
-    'Net::HTTPS'      => 0,
+    'Net::HTTP::NB'   => 0,
+    'Net::HTTPS::NB'  => 0,
     'IO::Socket::SSL' => 0,
     'Net::SSL'        => 0,
   },
