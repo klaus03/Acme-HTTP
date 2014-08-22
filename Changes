@@ -17,3 +17,8 @@ Revision history for Perl module Acme::HTTP
 0.05 2014-08-21
  - Replace Net::HTTP  by Net::HTTP::NB
    Replace Net::HTTPS by Net::HTTPS::NB
+
+0.06 2014-08-22
+ - Refactor Acme::HTTP, make new return a correctly blessed Acme::HTTP object
+   Data abstraction, hide package variables (such as $Acme::HTTP::Code) using
+   getter and setter subroutines

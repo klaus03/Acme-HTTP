@@ -5,43 +5,74 @@ use warnings;
 
 require Exporter;
 our @ISA       = qw(Exporter);
-our @EXPORT    = qw();
+our @EXPORT    = qw(
+  get_url_act
+  get_redir_act
+  get_code
+  get_message
+  get_response
+
+  get_redir_max
+  get_timeout
+
+  set_redir_max
+  set_timeout
+);
+
+our %EXPORT_TAGS = (all => [ @EXPORT ]);
+
 our @EXPORT_OK = qw();
-our $VERSION   = '0.05';
+our $VERSION   = '0.06';
 
 use Net::HTTP::NB;
 use Net::HTTPS::NB;
+use IO::Select;
 
-our $MaxIt;
-$MaxIt = 3 unless defined $MaxIt;
+our $Url_act   = '';
+our $Redir_act = 0;
+
+our $Code      = -1;
+our $Message   = '?';
+our %Response  = ();
+
+our $Redir_max;
+$Redir_max = 3 unless defined $Redir_max;
 
 our $TimeOut;
 $TimeOut = 10 unless defined $TimeOut;
 
+sub get_url_act   { $Url_act }
+sub get_redir_act { $Redir_act }
+sub get_code      { $Code }
+sub get_message   { $Message }
+sub get_response  { \%Response }
+
+sub get_redir_max { $Redir_max }
+sub get_timeout   { $TimeOut }
+
+sub set_redir_max { $Redir_max = $_[0] }
+sub set_timeout   { $TimeOut   = $_[0] }
+
 sub new {
-    my $self = shift;
+    shift;
     my ($url) = @_;
     my $hdl;
 
-    our $Code = -1;
-    our $Message = '?';
-    our %Response = ();
-
-    our $Real_Url = '';
-    our $Iter = 0;
+    $Url_act = '';
+    $Redir_act = 0;
 
     while (defined $url) {
-        $Iter++;
-        if ($Iter > $MaxIt) {
-            $@ = 'Acme::HTTP - Runaway iterations ('.$MaxIt.')';
+        $Redir_act++;
+        if ($Redir_act > $Redir_max) {
+            $@ = 'Acme::HTTP - Runaway iterations ('.$Redir_max.')';
             return;
         }
 
-        $Real_Url = $url;
+        $Url_act = $url;
 
         my ($type, $host, $get) =
-          $Real_Url =~ m{\A ([^:]+) : // ([^/]+)        \z}xms ? ($1, $2, '/') :
-          $Real_Url =~ m{\A ([^:]+) : // ([^/]+) (/ .*) \z}xms ? ($1, $2, $3)  :
+          $Url_act =~ m{\A ([^:]+) : // ([^/]+)        \z}xms ? ($1, $2, '/') :
+          $Url_act =~ m{\A ([^:]+) : // ([^/]+) (/ .*) \z}xms ? ($1, $2, $3)  :
           do {
             $@ = 'Acme::HTTP - Invalid structure)';
             return;
@@ -84,7 +115,28 @@ sub new {
         return;
     }
 
-    return $hdl;
+    bless { hdl => $hdl };
+}
+
+sub read_entity_body {
+    my $self = shift;
+
+    my $hdl = $self->{'hdl'};
+    my $sel = IO::Select->new($hdl);
+
+    unless ($sel->can_read($Acme::HTTP::TimeOut)) {
+        $@ = 'Timeout ('.$Acme::HTTP::TimeOut.' sec)';
+        return;
+    }
+
+    my $bytes = $hdl->read_entity_body($_[0], $_[1]);
+
+    unless (defined $bytes) {
+        $@ = "$!";
+        return;
+    }
+
+    return $bytes;
 }
 
 1;
@@ -93,7 +145,7 @@ __END__
 
 =head1 NAME
 
-Acme::HTTP - High-level access to Net::HTTP and Net::HTTPS
+Acme::HTTP - High-level access to Net::HTTP::NB and Net::HTTPS::NB
 
 =head1 SYNOPSIS
 
@@ -105,71 +157,93 @@ Acme::HTTP - High-level access to Net::HTTP and Net::HTTPS
     # ...or, alternatively, use https:
     #  $url = "https://metacpan.org/pod/Data::Dumper";
 
-    $Acme::HTTP::MaxIt   =  3; # Number of redirections
-    $Acme::HTTP::TimeOut = 10; # TimeOut in seconds
+    set_redir_max(3); # Max. number of redirections
+    set_timeout(10);  # Timeout in seconds
 
     my $obj = Acme::HTTP->new($url) || die $@;
 
-    if ($Acme::HTTP::Code eq '404') {
+    my $code = get_code();
+    my $msg  = get_message();
+
+    if ($code eq '404') {
         die "Page '$url' not found";
     }
-    elsif ($Acme::HTTP::Code ne '200') {
-        die "Page '$url' - Error $Acme::HTTP::Code, ".
-          "Msg '$Acme::HTTP::Message'";
+    elsif ($code ne '200') {
+        die "Page '$url' - Error $code, Msg '$msg'";
     }
 
-    print "Orig url   = ", $url, "\n";
-    print "Real url   = ", $Acme::HTTP::Real_Url, "\n";
-    print "Iterations = ", $Acme::HTTP::Iter, "\n";
-    print "Length     = ", $Acme::HTTP::Response{'Content-Length'} // 0, "\n";
+    print "Orig url     = ", $url, "\n";
+    print "Real url     = ", get_url_act(), "\n";
+    print "Redirections = ", get_redir_act(), "\n";
+    print "Length       = ", get_response()->{'Content-Length'} // 0, "\n";
     print "\n";
 
-    use IO::Select;
-    my $sel = IO::Select->new($obj);
-
     while (1) {
-        # we allow 15 seconds before timeout
-        die "Body timeout" unless $sel->can_read(15);
-
         my $n = $obj->read_entity_body(my $buf, 4096);
-        die "read failed: $!" unless defined $n;
+        die "read failed: $@" unless defined $n;
         last unless $n;
 
         print $buf;
     }
 
-=head1 VARIABLES
+=head1 PARAMETERS
+
+The following parameters can be set in advance:
+
+=over
+
+=item set_redir_max($count)
+
+  Set the maximum number of redirections
+
+=item set_timeout($sec)
+
+  Set the timout in seconds
+
+=back
+
+=head1 RETURN VALUES
 
 The following variables are available read-only after new():
 
 =over
 
-=item $Acme::HTTP::Code
+=item get_url_act()
 
-=item $Acme::HTTP::Message
+  returns the actual url after redirection
 
-=item %Acme::HTTP::Response
+=item get_redir_act()
 
-=item $Acme::HTTP::Real_Url
+  returns the actual number of redirection that have taken place
 
-=item $Acme::HTTP::Iter
+=item get_code()
+
+  returns the HTTP status
+
+=item get_message()
+
+  returns the HTTP message
+
+=item get_response()
+
+  returns a hash-reference of the response variables
 
 =back
 
 =head2 List of values
 
-In case of a successful read, the variables $Acme::HTTP::Code and
-$Acme::HTTP::Message are usually set as follows:
+In case of a successful new(), the subroutines get_code() and
+get_message() are usually set as follows:
 
-  $Acme::HTTP::Code    => '200'
-  $Acme::HTTP::Message => 'OK'
+  get_code()    => '200'
+  get_message() => 'OK'
 
 However, a non-existing address would typically return different values:
 
-  $Acme::HTTP::Code    => '404'
-  $Acme::HTTP::Message => 'Not Found'
+  get_code()    => '404'
+  get_message() => 'Not Found'
 
-Here is one sample result of %Acme::HTTP::Response of an MP3 file:
+Here is one sample result of get_response() of an MP3 file:
 
   'Content-Type'   => 'audio/mpeg'
   'Content-Length' => '28707232'
@@ -182,7 +256,7 @@ Here is one sample result of %Acme::HTTP::Response of an MP3 file:
   'ETag'           => '"1404967972"'
   'X-HW'           => '1408272823.dop...pa1.c'
 
-...and here is another example result of %Acme::HTTP::Response of a Web page:
+...and here is another example result of get_esponse() of a web page:
 
   'Content-Type'   => 'text/html; charset=utf-8'
   'Content-Length' => '31569'
