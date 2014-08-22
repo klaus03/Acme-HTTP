@@ -22,10 +22,8 @@ our @EXPORT    = qw(
 our %EXPORT_TAGS = (all => [ @EXPORT ]);
 
 our @EXPORT_OK = qw();
-our $VERSION   = '0.06';
+our $VERSION   = '0.07';
 
-use Net::HTTP::NB;
-use Net::HTTPS::NB;
 use IO::Select;
 
 our $Url_act   = '';
@@ -85,6 +83,17 @@ sub new {
             $@ = 'Acme::HTTP - Can\'t identify type';
             return;
           };
+
+        if ($net_http eq 'Net::HTTP::NB') {
+            require Net::HTTP::NB;
+        }
+        elsif ($net_http eq 'Net::HTTPS::NB') {
+            require Net::HTTPS::NB;
+        }
+        else {
+            $@ = 'Acme::HTTP - Internal error net_http = \''.$net_http.'\'';
+            return;
+        }
 
         $hdl = $net_http->new(Host => $host) or do {
             $@ = 'Acme::HTTP - Can\'t Net::HTTP(S)->new(Host =>...)';

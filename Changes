@@ -22,3 +22,6 @@ Revision history for Perl module Acme::HTTP
  - Refactor Acme::HTTP, make new return a correctly blessed Acme::HTTP object
    Data abstraction, hide package variables (such as $Acme::HTTP::Code) using
    getter and setter subroutines
+
+0.07 2014-08-22
+ - Make Acme::HTTP require Net::HTTP/S::NB dynamically
