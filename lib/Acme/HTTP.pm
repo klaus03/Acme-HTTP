@@ -22,7 +22,7 @@ our @EXPORT    = qw(
 our %EXPORT_TAGS = (all => [ @EXPORT ]);
 
 our @EXPORT_OK = qw();
-our $VERSION   = '0.07';
+our $VERSION   = '0.08';
 
 use IO::Select;
 
@@ -203,11 +203,11 @@ The following parameters can be set in advance:
 
 =item set_redir_max($count)
 
-  Set the maximum number of redirections
+Set the maximum number of redirections
 
 =item set_timeout($sec)
 
-  Set the timout in seconds
+Set the timout in seconds
 
 =back
 
@@ -219,23 +219,23 @@ The following variables are available read-only after new():
 
 =item get_url_act()
 
-  returns the actual url after redirection
+returns the actual url after redirection
 
 =item get_redir_act()
 
-  returns the actual number of redirection that have taken place
+returns the actual number of redirection that have taken place
 
 =item get_code()
 
-  returns the HTTP status
+returns the HTTP status
 
 =item get_message()
 
-  returns the HTTP message
+returns the HTTP message
 
 =item get_response()
 
-  returns a hash-reference of the response variables
+returns a hash-reference of the response variables
 
 =back
 
