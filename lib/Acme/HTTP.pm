@@ -22,7 +22,7 @@ our @EXPORT    = qw(
 our %EXPORT_TAGS = (all => [ @EXPORT ]);
 
 our @EXPORT_OK = qw();
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 
 use IO::Select;
 

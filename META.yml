@@ -1,26 +1,27 @@
 ---
-abstract: 'High-level access to Net::HTTP and Net::HTTPS'
+abstract: 'High-level access to Net::HTTP::NB and Net::HTTPS::NB'
 author:
   - 'Klaus Eichner <klaus03@gmail.com>'
-build_requires: {}
+build_requires:
+  ExtUtils::MakeMaker: '0'
 configure_requires:
-  Module::Build: '0'
+  ExtUtils::MakeMaker: '0'
 dynamic_config: 1
-generated_by: 'Module::Build version 0.4205, CPAN::Meta::Converter version 2.141170'
+generated_by: 'ExtUtils::MakeMaker version 6.98, CPAN::Meta::Converter version 2.141170'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
 name: Acme-HTTP
-provides:
-  Acme::HTTP:
-    file: lib/Acme/HTTP.pm
-    version: '0.08'
+no_index:
+  directory:
+    - t
+    - inc
 requires:
   IO::Socket::SSL: '0'
-  Net::HTTP::NB: '0'
-  Net::HTTPS::NB: '0'
+  Net::HTTP: '0'
+  Net::HTTPS: '0'
   Net::SSL: '0'
 resources:
-  license: http://dev.perl.org/licenses/
-version: '0.08'
+  repository: https://github.com/klaus03/Acme-HTTP.git
+version: '0.09'

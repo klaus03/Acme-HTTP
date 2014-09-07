@@ -1,30 +1,70 @@
-Revision history for Perl module Acme::HTTP
+Revision history for Acme-HTTP
 
-0.01 2014-08-17
- - First version, released on an unsuspecting world.
+0.09 - 2014-09-07T18:34:12+01:00
 
-0.02 2014-08-18
- - Fix some minor problems in the documentation.
+  [DOCUMENTATION]
 
-0.03 2014-08-19
- - Add two more dependencies
-   IO::Socket::SSL
-   Net::SSL
+  - Add a .gitignore file
 
-0.04 2014-08-20
- - Allow for flexible Max Iterations
+  - Changelog dates are better written as YYYY.MM.DD and probably ordered in
+    the other, descending, direction
+    Remark: I have decided to follow the ISO 8601 standard at
+    http://www.w3.org/TR/NOTE-datetime
 
-0.05 2014-08-21
- - Replace Net::HTTP  by Net::HTTP::NB
-   Replace Net::HTTPS by Net::HTTPS::NB
+  - Just use a Makefile.PL and not a Build.PL the latter does not have any
+    added value any more
 
-0.06 2014-08-22
- - Refactor Acme::HTTP, make new return a correctly blessed Acme::HTTP object
-   Data abstraction, hide package variables (such as $Acme::HTTP::Code) using
-   getter and setter subroutines
+  - In Makefile.PL ==> meta files link to repository
 
-0.07 2014-08-22
- - Make Acme::HTTP require Net::HTTP/S::NB dynamically
+0.08 - 2014-08-22T16:00:00+01:00
 
-0.08 2014-08-22
- - Fix some minor formatting in the documentation
+  [DOCUMENTATION]
+
+  - Fix some minor formatting in the documentation
+
+0.07 - 2014-08-22T14:00:00+01:00
+
+  [ENHANCEMENTS]
+
+  - Make Acme::HTTP require Net::HTTP/S::NB dynamically
+
+0.06 - 2014-08-22T12:00:00+01:00
+
+  [REFACTORING]
+
+  - Refactor Acme::HTTP, make new return a correctly blessed Acme::HTTP object
+    Data abstraction, hide package variables (such as $Acme::HTTP::Code) using
+    getter and setter subroutines
+
+0.05 - 2014-08-21T12:00:00+01:00
+
+  [ENHANCEMENTS]
+
+  - Replace Net::HTTP  by Net::HTTP::NB
+    Replace Net::HTTPS by Net::HTTPS::NB
+
+0.04 - 2014-08-20T12:00:00+01:00
+
+  [ENHANCEMENTS]
+
+  - Allow for flexible Max Iterations
+
+0.03 - 2014-08-19T12:00:00+01:00
+
+  [DOCUMENTATION]
+
+  - Add two more dependencies
+    IO::Socket::SSL
+    Net::SSL
+
+0.02 - 2014-08-18T12:00:00+01:00
+
+  [DOCUMENTATION]
+
+  - Fix some minor problems in the documentation.
+
+0.01 - 2014-08-17T12:00:00+01:00
+
+  [ENHANCEMENTS]
+
+  - First version, released on an unsuspecting world.
