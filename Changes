@@ -1,5 +1,11 @@
 Revision history for Acme-HTTP
 
+0.10 - 2014-12-28T09:24:30+01:00
+
+  [DOCUMENTATION]
+
+  - Migrate to Dist::Zilla
+
 0.09 - 2014-09-07T18:34:12+01:00
 
   [DOCUMENTATION]
